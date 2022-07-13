@@ -1,5 +1,5 @@
 # microservices_task
-Todos:
+## Todos:
 - [x] Build a gateway API
 - [x] Build users CRUD
 - [x] Add JWT authentication
