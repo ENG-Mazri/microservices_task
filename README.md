@@ -1,5 +1,5 @@
 # microservices_task
 Todos:
--[x] build a gateway API
+- [x] build a gateway API
 
  
