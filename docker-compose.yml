@@ -5,6 +5,7 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+  
   kafka:
     image: 'bitnami/kafka:latest'
     container_name: 'kafka'
@@ -18,13 +19,40 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+  
   postgres:
     image: '14.4-alpine'
     ports:
       - '5432:5432'
+  
   api_gateway:
     build: './API_gateway'
     container_name: api_gateway
     ports:
       - '4444:4444'
   
+  users:
+    build: './users'
+    container_name: users
+    ports:
+      - '3333:3333'
+    depends_on:
+      - postgres
+      - kafka
+  
+  notes:
+    build: './notes'
+    container_name: notes
+    ports:
+      - '5000:5000'
+    depends_on:
+      - postgres
+
+  emails:
+    build: './emails'
+    container_name: emails
+    ports:
+      - '6666:6666'
+    depends_on:
+      - postgres
+      - kafka

@@ -11,7 +11,7 @@ app.use(express.json())
 
 app.use(router)
 const db = require("./models");
-db.noteDB.sync()
+db.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
   })

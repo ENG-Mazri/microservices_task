@@ -1,5 +1,5 @@
-module.exports = (noteDB,userDB, Sequelize) => {
-    const Note = noteDB.define("notes", {
+module.exports = (sequelize, Sequelize) => {
+    const Note = sequelize.define("notes", {
       title: {
         type: Sequelize.STRING
       },

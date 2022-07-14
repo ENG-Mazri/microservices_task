@@ -1,7 +1,7 @@
 const ndbConfig = require("../config/notedb.config.js");
 const udbConfig = require("../config/userdb.config");
 const Sequelize = require("sequelize");
-const noteDB = new Sequelize(ndbConfig.DB, ndbConfig.USER, ndbConfig.PASSWORD, {
+const sequelize = new Sequelize(ndbConfig.DB, ndbConfig.USER, ndbConfig.PASSWORD, {
   host: ndbConfig.HOST,
   dialect: ndbConfig.dialect,
   operatorsAliases: 0,
@@ -25,8 +25,7 @@ const userDB = new Sequelize(udbConfig.DB, udbConfig.USER, udbConfig.PASSWORD, {
 });
 const db = {};
 db.Sequelize = Sequelize;
-db.noteDB = noteDB;
-db.userDB = userDB;
-db.Note = require("./model.js")(noteDB,userDB, Sequelize);
-console.log(db.userDB)
+db.sequelize = sequelize;
+
+db.Note = require("./model.js")(sequelize, Sequelize);
 module.exports = db;
