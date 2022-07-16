@@ -12,8 +12,7 @@
 - [x] Build users CRUD
 - [x] Add JWT authentication
 - [x] Build notes CRUD
-- [ ] Add associations to databases
-- [ ] Create a Kafka producer
+- [x] Create a Kafka producer
 - [x] Create a Kafka consumer
 - [x] Setup the email service
-- [x] Setup Docker-compose file 
+- [ ] Setup Docker-compose file 
