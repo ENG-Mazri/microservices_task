@@ -1,4 +1,5 @@
 const kafka = require('node-rdkafka')
+const fs = require('fs')
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
@@ -12,8 +13,10 @@ consumer.on('ready', ()=>{
     consumer.subscribe(['email'])
     consumer.consume()
 }).on('data', data=>{
+    const name = data.value.toString()
+
     const transporter = nodemailer.createTransport({
-        service: 'Gmail',
+        host: 'smtp.mail.ru',
         port: 465,
         secure:true,
         auth: {
@@ -24,15 +27,18 @@ consumer.on('ready', ()=>{
     
     const mailOptions = {
       from: process.env.USER_EMAIL,
-      to: data.email,
-      subject: 'Sending Email from the email service',
-      text: 'Hello there'
+      to: 'eng.mazri@gmail.com',
+      subject: 'Welcome to this app!',
+      text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      html: `<h1>Welcome ${name} to this app!</h1><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`
     };
+    
     transporter.sendMail(mailOptions, (error, info) => {
+    
         if (error) {
             console.log(error);
         } else {
             console.log('Email sent: ' + info.response);
-        }   
+        } 
     });
 })

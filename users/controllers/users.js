@@ -1,6 +1,7 @@
 const db = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const kafka = require('node-rdkafka')
 require('dotenv').config()
 const User = db.User;
 const Op = db.Sequelize.Op;
@@ -24,6 +25,21 @@ exports.create = async (req, res) => {
             const data = await User.create({email, password:hashedPassword})
             const token = jwt.sign({email}, process.env.SECRET_KEY);
             res.cookie('jwt', token, {httpOnly:true, maxAge:24 * 60 * 60*1000})
+            
+            const name = email.split("@")[0]
+
+            const stream = kafka.createWriteStream({'metadata.broker.list':'localhost:9092'},
+                            {},{topic:'email'})
+
+            const queueMessage = ()=>{
+                const success = stream.write(Buffer.from(name, 'utf-8'))
+                if(success){
+                    console.log('message wrote successfully :)')
+                }else{
+                    console.log('couldn\'t write message :(')
+                }
+            }
+            queueMessage()
             res.send({email,hashedPassword,token})        
         } catch (err) {
             res.status(500).send({

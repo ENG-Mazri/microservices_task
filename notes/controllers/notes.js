@@ -1,33 +1,50 @@
 const db = require("../models");
-const Note = db.sequelize;
+const Note = db.Note;
 const Op = db.Sequelize.Op;
+
+const jwt = require("jsonwebtoken");
 
 
 // Create and Save a new note
+
 exports.create = async (req, res) => {
-    if (!req.body.description) {
-        res.status(400).send({
-          message: "Content can't be empty"
-        });
-        return;
-      }else{
-        // Create a note
-        const note = {
-          title: req.body.title,
-          description: req.body.description
-        };
-  
-        try {
-          // Save note in the database
-          const data = await Note.create(note)
-          res.send({message:"Note added successfully!"})        
-        } catch (err) {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while creating the user."
+  const cookie = req.headers.cookie
+    if(cookie){
+        const token = cookie.split('=')[1]
+        const decoded = jwt.decode(token, {complete: true})
+        const payload = decoded.payload
+        const email = payload.email
+
+        if (!req.body.description) {
+          res.status(400).send({
+            message: "Content can't be empty"
           });
+          return;
+        }else{
+          
+          // Create a note
+          const note = {
+            title: req.body.title,
+            description: req.body.description,
+            userEmail: email
+          };
+    
+          try {
+            // Save note in the database
+            const data = await Note.create(note)
+            res.send({message:"Note added successfully!"})       
+          } catch (err) {
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while creating the user."
+            });
+          }
         }
-      }
+
+    }else{
+        res.send("Login first, or sign up if you haven't yet.")
+    }
+    
 };
 
 // Retrieve all notes from the database.
@@ -104,4 +121,27 @@ exports.deleteAll = async (req, res) => {
         err.message || "Some error occurred while removing all notes."
     });
   }
+};
+
+// Find all published notes by user
+
+exports.findAllPublished = async (req, res) => {
+  const cookie = req.headers.cookie
+    if(cookie){
+        const token = cookie.split('=')[1]
+        const decoded = jwt.decode(token, {complete: true})
+        const payload = decoded.payload
+        const email = payload.email
+        try {
+          const data = await Note.findAll({ where: { userEmail: email } })
+          res.send(data)
+        } catch (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while retrieving notes."
+          });
+        }
+    }else{
+      res.send("Login first, or sign up if you haven't yet.")
+    }
 };

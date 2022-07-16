@@ -5,7 +5,11 @@ module.exports = (sequelize, Sequelize) => {
       },
       description: {
         type: Sequelize.STRING
+      },
+      userEmail: {
+        type: Sequelize.STRING
       }
+
     });
     return Note
 };
