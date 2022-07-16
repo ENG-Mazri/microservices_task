@@ -26,13 +26,13 @@ exports.create = async (req, res) => {
             const token = jwt.sign({email}, process.env.SECRET_KEY);
             res.cookie('jwt', token, {httpOnly:true, maxAge:24 * 60 * 60*1000})
             
-            const name = email.split("@")[0]
+            ///const name = email.split("@")[0]
 
             const stream = kafka.createWriteStream({'metadata.broker.list':'localhost:9092'},
                             {},{topic:'email'})
 
             const queueMessage = ()=>{
-                const success = stream.write(Buffer.from(name, 'utf-8'))
+                const success = stream.write(Buffer.from(email, 'utf-8'))
                 if(success){
                     console.log('message wrote successfully :)')
                 }else{

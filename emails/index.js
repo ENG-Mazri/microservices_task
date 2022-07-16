@@ -13,7 +13,7 @@ consumer.on('ready', ()=>{
     consumer.subscribe(['email'])
     consumer.consume()
 }).on('data', data=>{
-    const name = data.value.toString()
+    const email = data.value.toString()
 
     const transporter = nodemailer.createTransport({
         host: 'smtp.mail.ru',
@@ -27,10 +27,10 @@ consumer.on('ready', ()=>{
     
     const mailOptions = {
       from: process.env.USER_EMAIL,
-      to: 'eng.mazri@gmail.com',
+      to: email,
       subject: 'Welcome to this app!',
       text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-      html: `<h1>Welcome ${name} to this app!</h1><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`
+      html: `<h1>Welcome to this app!</h1><br/><p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>`
     };
     
     transporter.sendMail(mailOptions, (error, info) => {

@@ -1,11 +1,16 @@
 FROM node:17-alpine
 
-WORKDIR /notes
+RUN npm i -g nodemon
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm i
 
 COPY . .
 
-RUN npm install
-
 EXPOSE 5000
 
-CMD ["node", "server.js"]
+
+CMD ["npm", "run", "dev"]

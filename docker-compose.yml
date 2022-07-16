@@ -5,6 +5,7 @@ services:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+
   kafka:
     image: 'bitnami/kafka:latest'
     container_name: 'kafka'
@@ -18,4 +19,83 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
- 
+
+  db:
+    image: postgres:14.1-alpine
+    container_name: dbpg
+    restart: always
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+      - ./pgdata:/var/lib/postgres/data
+
+  users:
+    build: ./users
+    container_name: users_c1
+    ports:
+      - '3333:3333'
+    depends_on:
+      - db
+    environment:
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_NAME: userdb
+    
+    links:
+      - db
+
+    volumes:
+      - ./users:/app
+      - /app/node_modules
+
+  notes:
+    build: ./notes
+    container_name: notes_c1
+    ports:
+      - '5000:5000'
+    depends_on:
+      - db
+    environment:
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_NAME: notedb
+    
+    links:
+      - db
+
+    volumes:
+      - ./notes:/app
+      - /app/node_modules
+
+  emails:
+    build: ./emails
+    container_name: emails_c1
+    ports:
+      - '6666:6666'
+    depends_on:
+      - db
+    environment:
+      USER_EMAIL: ${USER_EMAIL}
+      USER_PASSWORD: ${USER_PASSWORD}
+
+    volumes:
+      - ./emails:/app
+      - /app/node_modules
+
+  api_gateway:
+    build: ./api_gateway
+    container_name: api_gateway_c1
+    ports:
+      - '4444:4444'
+
+    volumes:
+      - ./api_gateway:/app
+      - /app/node_modules
