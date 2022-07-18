@@ -15,4 +15,6 @@
 - [x] Create a Kafka producer
 - [x] Create a Kafka consumer
 - [x] Setup the email service
-- [ ] Setup Docker-compose file 
+- [x] Setup Docker-compose file 
+
+So far, messaging between users service and emails service works only when not served in a docker container, due to some issues with librdkafka transporter.
