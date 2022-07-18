@@ -6,6 +6,7 @@
 ![Postgresql](https://img.shields.io/badge/-Postgresql-404040?style=for-the-badge&logo=Postgresql)
 ![sequelize](https://img.shields.io/badge/-sequelize-404040?style=for-the-badge&logo=sequelize)
 ![kafka](https://img.shields.io/badge/-kafka-404040?style=for-the-badge&logo=apachekafka)
+![docker](https://img.shields.io/badge/-docker-404040?style=for-the-badge&logo=docker)
 
 ## Todos:
 - [x] Build a gateway API
