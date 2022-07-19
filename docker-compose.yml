@@ -19,6 +19,12 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
+  
+  # python:
+  #   image: 'python:3.11.0b4-alpine3.16'
+  #   container_name: python
+  #   ports:
+  #     - '80:80' 
 
   db:
     image: postgres:14.1-alpine
@@ -40,12 +46,15 @@ services:
       - '3333:3333'
     depends_on:
       - db
+      - kafka
+      # - python
     environment:
+      PORT: 3333
       PG_HOST: db
       PG_PORT: 5432
       PG_USER: postgres
       PG_PASSWORD: postgres
-      PG_NAME: userdb
+      PG_DB: userdb
     
     links:
       - db
@@ -62,11 +71,12 @@ services:
     depends_on:
       - db
     environment:
+      PORT: 5000
       PG_HOST: db
       PG_PORT: 5432
       PG_USER: postgres
       PG_PASSWORD: postgres
-      PG_NAME: notedb
+      PG_DB: notedb
     
     links:
       - db
@@ -81,11 +91,12 @@ services:
     ports:
       - '6666:6666'
     depends_on:
-      - db
+      - kafka
     environment:
       USER_EMAIL: ${USER_EMAIL}
       USER_PASSWORD: ${USER_PASSWORD}
-
+    links:
+      - users
     volumes:
       - ./emails:/app
       - /app/node_modules
@@ -95,6 +106,12 @@ services:
     container_name: api_gateway_c1
     ports:
       - '4444:4444'
+    environment:
+      PORT: 4444
+
+    links:
+      - users
+      - notes
 
     volumes:
       - ./api_gateway:/app

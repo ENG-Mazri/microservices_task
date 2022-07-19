@@ -12,24 +12,4 @@ router.delete('/:id', User.delete)
 router.delete('/', User.deleteAll)
 router.post('/login', login.login)
 
-
-// router.post('/kafka', (req,res)=>{
-
-//     const {name} = req.body
-//     const stream = kafka.createWriteStream({'metadata.broker.list':'localhost:9092'},
-//                     {},{topic:'email'})
-
-//     const queueMessage = ()=>{
-//         const success = stream.write(Buffer.from(name, 'utf-8'))
-//         if(success){
-//             console.log('message wrote successfully :)')
-//         }else{
-//             console.log('couldn\'t write message :(')
-//         }
-//     }
-//     queueMessage()
-//     res.send('message sent')
-// })
-
-
 module.exports = router

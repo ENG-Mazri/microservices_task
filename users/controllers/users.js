@@ -9,46 +9,53 @@ const {isValidUser} = require('./utils.js')
 
 // Create and Save a new user
 exports.create = async (req, res) => {
-    if (!isValidUser(req.body)) {
-        res.status(400).send({
-          message: "user dos not fit the criteria!"
-        });
-        return;
-      }else{
-        // Create a user
-        const {email} = req.body;
-        const {password} = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10)
-  
-        try {
-            // Save user in the database
-            const data = await User.create({email, password:hashedPassword})
-            const token = jwt.sign({email}, process.env.SECRET_KEY);
-            res.cookie('jwt', token, {httpOnly:true, maxAge:24 * 60 * 60*1000})
-            
-            ///const name = email.split("@")[0]
+  if (!isValidUser(req.body)) {
+      res.status(400).send({
+        message: "user dos not fit the criteria!"
+      });
+      return;
+    }else{
+      // Create a user
+      const {email} = req.body;
+      const {password} = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10)
 
+      try {
+          // Save user in the database
+          const data = await User.create({email, password:hashedPassword})
+          const token = jwt.sign({email}, process.env.SECRET_KEY);
+          res.cookie('jwt', token, {httpOnly:true, maxAge:24 * 60 * 60*1000})
+          
+          //const name = email.split("@")[0]
+          
+          // writing to kafka consumer
+          //console.log("PRODUCER STREAM: ",stream)
+          try {
             const stream = kafka.createWriteStream({'metadata.broker.list':'localhost:9092'},
                             {},{topic:'email'})
-
             const queueMessage = ()=>{
-                const success = stream.write(Buffer.from(email, 'utf-8'))
-                if(success){
-                    console.log('message wrote successfully :)')
-                }else{
-                    console.log('couldn\'t write message :(')
-                }
-            }
-            queueMessage()
-            res.send({email,hashedPassword,token})        
-        } catch (err) {
-            res.status(500).send({
-              message:
-                err.message || "Some error occurred while creating the user."
-            });
-        }
-
+              const success = stream.write(Buffer.from("email", 'utf-8'))
+              if(success){
+                  console.log('Mssage wrote successfully!')
+              }else{
+                  console.log('Couldn\'t write message!')
+              }
+              setInterval(()=>queueMessage(),1000)
+              
+          }
+          } catch (error) {
+            console.log(error)
+          }
+          
+          res.send({email,hashedPassword,token})        
+      } catch (err) {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the user."
+          });
       }
+
+    }
 };
 
 // Retrieve all users from the database.

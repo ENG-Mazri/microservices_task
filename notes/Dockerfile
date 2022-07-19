@@ -1,12 +1,12 @@
 FROM node:17-alpine
 
-RUN npm i -g nodemon
+RUN npm install -g nodemon
 
 WORKDIR /app
 
 COPY package.json .
 
-RUN npm i
+RUN npm install
 
 COPY . .
 

@@ -1,12 +1,14 @@
 FROM node:17-alpine
 
-RUN npm i -g nodemon
+RUN npm install -g nodemon
 
 WORKDIR /app
+RUN apk --no-cache --update add python3 py3-pip alpine-sdk bash librdkafka openssl-dev
+
 
 COPY package.json .
 
-RUN npm i
+RUN npm install
 
 COPY . .
 
