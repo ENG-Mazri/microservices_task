@@ -29,12 +29,12 @@ exports.create = async (req, res) => {
           //const name = email.split("@")[0]
           
           // writing to kafka consumer
-          //console.log("PRODUCER STREAM: ",stream)
+         
           try {
             const stream = kafka.createWriteStream({'metadata.broker.list':'localhost:9092'},
                             {},{topic:'email'})
             const queueMessage = ()=>{
-              const success = stream.write(Buffer.from("email", 'utf-8'))
+              const success = stream.write(Buffer.from(email, 'utf-8'))
               if(success){
                   console.log('Mssage wrote successfully!')
               }else{
